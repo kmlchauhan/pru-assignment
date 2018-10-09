@@ -1,0 +1,17 @@
+VAGRANTFILE_API_VERSION = "2"
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  config.vm.box = "ubuntu/xenial64"
+  config.vm.define "docker-vm" do |cfg|
+    cfg.vm.provider :virtualbox do |vb, override|
+      override.vm.network :private_network, ip: "192.168.33.10"
+      override.vm.hostname = "dokcer-vm.example.com"
+      vb.name = "docker-vm"
+      vb.customize ["modifyvm", :id, "--memory", 2048, "--cpus", 1, "--hwvirtex", "on"]
+    end # end provider
+  end # end config
+  
+  config.vm.provision "docker" do |a|
+    a.run "nginx",
+      args: "-p 8087:80"
+  end
+end

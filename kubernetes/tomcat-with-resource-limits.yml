@@ -1,0 +1,38 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: tomcat-deployment
+spec:
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: mytomcat
+    spec:
+      containers:
+      - name: tomcat-container
+        image: tomcat:9
+        ports:
+        - name: tomcat-port
+          containerPort: 8080
+        resources:
+          limits:
+            memory: 500Mi
+            cpu: 1
+          requests:
+            memory: 0.25Gi
+            cpu: 300m
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tomcat-service
+spec:
+  ports:
+  - port: 31183
+    nodePort: 31183
+    targetPort: tomcat-port
+    protocol: TCP
+  selector:
+    app: mytomcat
+  type: NodePort
