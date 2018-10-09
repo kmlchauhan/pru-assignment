@@ -1,0 +1,14 @@
+---
+- include_vars: "default.yml"
+#  tags:
+#    - patch
+
+#- include: patchingOS.yml
+#  tags:
+#    - patch
+
+
+- include: upgradeKernel.yml
+- include: patchingOS.yml
+  tags:
+    - patch

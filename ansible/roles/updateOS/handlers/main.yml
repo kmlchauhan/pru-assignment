@@ -1,0 +1,9 @@
+---
+- name: Restart OS
+#  command: /sbin/reboot
+#  when: reboot
+  shell: sleep 2 && shutdown -r +1 "Ansible Updates Triggered"
+  async: 1
+  poll: 0
+  sudo: true
+  ignore_errors: true

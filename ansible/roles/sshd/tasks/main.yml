@@ -1,0 +1,28 @@
+---
+# tasks file for roles/sshd
+
+- name: Add OS specific variables
+  include_vars: "{{ ansible_os_family }}.yml"
+  tags: ['package', 'configuration', 'service']
+
+- name: Install SSHD for Debian
+  apt: pkg={{ sshd_pkg_name }} state={{ sshd_pkg_state }}
+  when: ansible_os_family == 'Debian'
+  tags: package
+
+- name: Install SSHD for RedHat or CentOS
+  yum: name={{ sshd_pkg_name }} state={{ sshd_pkg_state }}
+  when: ansible_os_family == 'RedHat' or ansible_os_family == 'CentOS'
+  tags: package
+
+- name: Configure SSHD
+  template: >
+    src=sshd_config.j2
+    dest={{ sshd_config_basedir }}/sshd_config
+    validate="/usr/sbin/sshd -t -f %s"
+  notify: Restart SSHD
+  tags: configuration
+
+- name: Enable SSHD
+  service: name={{ sshd_service_name }} state=started enabled=yes
+  tags: service

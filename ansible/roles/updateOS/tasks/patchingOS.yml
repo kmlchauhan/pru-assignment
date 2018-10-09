@@ -1,0 +1,10 @@
+---
+- name: Patching apt based packages
+  apt: upgrade=dist update_cache=yes
+  when: ansible_os_family == "Debian"
+  notify: Restart OS
+
+- name: Patching yum based packages
+  yum: name=* state=latest
+  when: ansible_os_family == "RedHat" or ansible_os_family == "CentOS"
+  notify: Restart OS

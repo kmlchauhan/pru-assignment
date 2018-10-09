@@ -1,0 +1,13 @@
+---
+# vars file for mountXFS
+
+new_disk: '/dev/sdb'
+new_mntp: '/apps/testing'
+create_vgname: 'apps-vg'
+resize_vgname: 'testing-vg'
+extend_vgname: 'testing-vg'
+create_lvname: 'apps-lv'
+resize_lvname: 'testing-lv'
+extend_lvname: 'testing-lv'
+create_lvsize: '80%VG'
+filesystem: 'xfs'

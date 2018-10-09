@@ -1,0 +1,60 @@
+---
+# tasks file for mountXFS
+
+- name: installing lvm2
+  yum: name=system-storage-manager state=present
+  when: ansible_os_family == "RedHat"
+
+- name: installing sg3_utils
+  yum: name=sg3_utils state=present
+  when: ansible_os_family == "RedHat"
+
+- name: rescanning for new disks
+  command: /usr/bin/rescan-scsi-bus.sh
+  when: ansible_os_family == "RedHat"
+
+- name: Ensure Mount Directory Exists
+  file:
+    path: "{{ new_mntp }}"
+    state: directory
+
+- name: Create /dev/sdb Partition
+  parted:
+    device: "{{ new_disk }}"
+    number: 1
+    state: present
+
+- name: Creating new LVM group
+  lvg: 
+    vg: "{{ create_vgname }}"
+    pvs: /dev/sdb1
+    state: present
+
+- name: Creating new LVM
+  lvol: 
+    vg: "{{ create_vgname }}"
+    lv: "{{ create_lvname }}"
+    size: "{{ create_lvsize }}"
+
+- name: Creating new FS on new LVM
+  filesystem: 
+    fstype: "{{ filesystem }}"
+    dev: /dev/{{ create_vgname }}/{{ create_lvname }}
+
+- name: Mounting new FS
+  mount: 
+    path: "{{ new_mntp }}"
+    src: /dev/{{ create_vgname }}/{{ create_lvname }}
+    fstype: "{{ filesystem }}"
+    state: mounted
+
+#- name: extending existing LVM volume group
+#  lvg: 
+#    vg: {{ extend_vgname }}
+#    pvs: {{ extend_disks }}
+
+#- name: extending existing filesystem
+#  command: lvextend {{ lvextend_options }} /dev/{{ extend_vgname }}/{{ extend_lvname }}
+
+#- name: resizing filesystem
+#  command: resize2fs /dev/{{ resize_vgname }}/{{ resize_lvname }}

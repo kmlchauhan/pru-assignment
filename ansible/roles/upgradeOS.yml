@@ -1,0 +1,9 @@
+- name: Upgrading All Servers
+  hosts: allservers
+  become: true
+
+  roles:
+#  - role: updateOS
+#  - role: sshd
+#  - mountXFS
+

@@ -1,0 +1,77 @@
+---
+- name: Install Development Tools Package
+  yum: name="@Development tools" state=present update_cache=yes
+
+- name: Intsall Kernel DEV Packages
+  yum: name={{ item }} state=present
+  with_items:
+  - ncurses-devel
+  - bc
+  - openssl-devel
+  - hmaccalc
+  - zlib-devel
+  - binutils-devel
+  - elfutils-libelf-devel
+
+- name: Download Kernel
+  get_url:
+    url: https://cdn.kernel.org/pub/linux/kernel/v4.x/linux-4.4.23.tar.xz
+    dest: /tmp/linux-{{ kernel_ver }}.tar.xz
+
+- name: Extract Kernel Package
+  shell: tar -Jxvf linux-{{ kernel_ver }}.tar.xz
+  args:
+    chdir: /tmp/
+
+- name: Copy Kernel Config File
+  copy: src=./kernel.config dest=/tmp/linux-{{ kernel_ver }}/.config
+
+- name: Install Kernel
+  shell: "{{ item }}"
+  with_items:
+  - make silentoldconfig .config
+  - make 
+  - make modules
+  - make modules_install
+  - make install
+  args:
+    chdir: /tmp/linux-{{ kernel_ver }}/
+  notify: Restart OS
+
+- name: Waiting for OS to come online
+  local_action: wait_for host={{ inventory_hostname }} state=started delay=30 timeout=300
+  sudo: true
+
+- name: Rerun make install to correct Grub Entry Order
+  shell: make install
+  args:
+    chdir: /tmp/linux-{{ kernel_ver }}/
+#  notify: Restart OS
+
+## Now after the below step also Grub Entry Order is GRUB_DEFAULT=saved due to which although new kernel i.e. 4.3.23 is installed but it is still taking the earlier one i.e. 3.10
+## you can confirm this by running below commandi.e.
+## cat /etc/default/grub
+## grub2-editenv list
+##
+## Also to confirm whether we have the correct entry in the grub.cfg file, please run this below command
+## grep ^menuentry /boot/grub2/grub.cfg | cut -d "'" -f2
+##
+## So, to correct this I am including one more below task to update the entry i.e. GRUB_DEFAULT=0 in the /etc/default/grub file
+
+- name: Correct Grub Entry Order
+  lineinfile:
+    dest: /etc/default/grub
+    regexp: '^\s*GRUB_DEFAULT=saved.*$'
+    line: 'GRUB_DEFAULT=0'
+    backrefs: yes
+
+- name: Apply Changes to grub.cfg
+  command: grub2-mkconfig -o /boot/grub2/grub.cfg
+
+- name: Set Desired Default Menu Entry
+  command: grub2-set-default 0
+  notify: Restart OS
+
+- name: Waiting for OS to come online
+  local_action: wait_for host={{ inventory_hostname }} state=started delay=30 timeout=300
+  sudo: true
