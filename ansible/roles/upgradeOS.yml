@@ -3,8 +3,8 @@
   become: true
 
   roles:
-#  - role: updateOS
-#  - role: sshd
+  - role: updateOS
+  - role: sshd
 #  - mountXFS
   - disableIPV6
 
