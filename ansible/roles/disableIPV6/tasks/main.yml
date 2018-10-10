@@ -1,0 +1,11 @@
+---
+
+- name: Check if IPv6 is disabled at Grub cmdline
+  command: cat /proc/cmdline
+  changed_when: false
+  ignore_errors: true
+  register: cmdline
+
+- block:
+    - include: disable-ipv6.yml
+  when: ansible_system == 'Linux' and not (' ipv6.disable=1' in cmdline.stdout)

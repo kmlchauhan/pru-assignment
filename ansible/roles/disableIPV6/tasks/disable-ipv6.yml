@@ -1,0 +1,46 @@
+---
+# tasks file for disableIPV6
+
+### Run below command to check whether IPv6 is enabled or disabled
+###
+### cat /proc/sys/net/ipv6/conf/all/disable_ipv6
+###
+### If output is 0 then it means IPv6 is enabled, and
+### If output is 1 then it means IPv6 is disabled.
+
+
+- name: Disable IPv6 with sysctl
+  sysctl: name={{ item }} value=1 state=present
+  with_items:
+    - net.ipv6.conf.all.disable_ipv6
+    - net.ipv6.conf.default.disable_ipv6
+    - net.ipv6.conf.lo.disable_ipv6
+
+- name: /bin/true for IPv6 in modprobe
+  lineinfile:
+    dest: /etc/modprobe.conf
+    line: "install ipv6 /bin/true"
+    create: yes
+  notify:
+    - rmmodipv6
+  when: ansible_os_family == 'RedHat'
+
+#- name: Disable ip6tables service (IPv6 Firewall)
+#  command: "chkconfig ip6tables off"
+#  when: ansible_os_family == 'RedHat'
+
+- name: RedHat | disable ipv6 in sysconfig/network
+  lineinfile:
+    dest: /etc/sysconfig/network
+    regexp: "^{{ item.regexp }}"
+    line: "{{ item.line }}"
+    backup: yes
+    create: yes
+  with_items:
+    - { regexp: 'NETWORKING_IPV6=.*', line: 'NETWORKING_IPV6=NO' }
+    - { regexp: 'IPV6INIT=.*', line: 'IPV6INIT=no' }
+  notify:
+    - Restart Network
+  when: ansible_os_family == 'RedHat'
+
+### Apart from runing the above cat command to verify the value as 1 you can also run this command “ip addr” command - You will notice that IPv6 lines have been removed.

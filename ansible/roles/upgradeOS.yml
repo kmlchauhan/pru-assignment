@@ -6,4 +6,5 @@
 #  - role: updateOS
 #  - role: sshd
 #  - mountXFS
+  - disableIPV6
 
