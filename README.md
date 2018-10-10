@@ -29,3 +29,11 @@ sudo ansible-playbook -i dev upgradeOS.yml
 - Just to validate the run of above role you can run the command: uname -a
 - It will give you the latest kernel version
 - Also, currently mountXFS role is giving some error and that's why I have commented it in upgradeOS.yml playbook.
+
+## Python
+- Created the searchAllFiles.py script which is working as expected.
+
+## Linux
+- Created the secondarySSHD.sh script but after all the process service is not coming up.
+- Handled it through systemd only.
+- Created the watchETC.sh script.
