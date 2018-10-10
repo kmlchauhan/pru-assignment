@@ -7,7 +7,7 @@ Important notes -
 ## Docker: 
 I have created the Vagrantfile to do the following tasks i.e.
 - Create VM
-- Intsall Docker and download nginx image
+- Install Docker and download nginx image
 - Run Nginx container on 8087 host port
 - Run the command: vagrant up
 - Access nginx - curl 192.168.33.10:8087
