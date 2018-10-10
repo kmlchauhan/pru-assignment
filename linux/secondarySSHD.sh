@@ -1,7 +1,5 @@
 #!/bin/bash
 
-#!/bin/bash
-
 SSHD_SECONDARY_CONFIG="/etc/ssh/sshd-secondary_config"
 SSHD_SECONDARY_SERVICE="/usr/lib/systemd/system/sshd-secondary.service"
 
