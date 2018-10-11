@@ -21,7 +21,7 @@ git clone https://github.com/kmlchauhan/pru-assignment.git
 cd pru-assignment/ansible
 git fetch
 git checkout release-v0.2
-sudo ansible-playbook -i ansible/roles/dev ansible/roles/upgradeOS.yml
+ansible-playbook -i ansible/roles/dev ansible/roles/upgradeOS.yml
 ```
 
 **Please note that,**
