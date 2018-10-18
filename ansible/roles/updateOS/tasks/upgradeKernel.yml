@@ -48,7 +48,7 @@
     chdir: /tmp/linux-{{ kernel_ver }}/
 #  notify: Restart OS
 
-## Now after the below step also Grub Entry Order is GRUB_DEFAULT=saved due to which although new kernel i.e. 4.3.23 is installed but it is still taking the earlier one i.e. 3.10
+## Now after the above step also Grub Entry Order is GRUB_DEFAULT=saved due to which although new kernel i.e. 4.3.23 is installed but it is still taking the earlier one i.e. 3.10
 ## you can confirm this by running below commandi.e.
 ## cat /etc/default/grub
 ## grub2-editenv list
