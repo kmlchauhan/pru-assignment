@@ -1,4 +1,4 @@
-Important notes -
+Important Notes --
 ==================
 
 ## Kubernetes: 
