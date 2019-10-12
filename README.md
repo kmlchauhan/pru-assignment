@@ -1,8 +1,6 @@
 Important Notes ====
 ==================
 
-## This below content is written down for DevOps Automation.
-
 ## Kubernetes: 
 - I have created one yml file for both Tomcat deployment and service.
 
